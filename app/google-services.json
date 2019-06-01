@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "682296498902",
+    "firebase_url": "https://visitormanager-9a163.firebaseio.com",
+    "project_id": "visitormanager-9a163",
+    "storage_bucket": "visitormanager-9a163.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682296498902:android:7db5759d16e68630",
+        "android_client_info": {
+          "package_name": "com.example.visitorsmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682296498902-ekc38212ue8oufdrib0rem83sn6qrh4a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwkK-MVCQwaID5bJk5uLnLJiwCWOdsWT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682296498902-ekc38212ue8oufdrib0rem83sn6qrh4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
