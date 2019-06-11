@@ -7,4 +7,9 @@
         android:layout_height="match_parent"
         tools:context=".Main2Activity">
 
+    <TextView
+            android:text="Hello World!!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="355dp"
+            tools:layout_editor_absoluteX="189dp" android:id="@+id/textView"/>
 </android.support.constraint.ConstraintLayout>
