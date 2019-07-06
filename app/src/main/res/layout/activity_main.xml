@@ -24,7 +24,7 @@
             android:text="Send OTP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button"
+            android:id="@+id/send_otp"
             app:layout_constraintStart_toStartOf="@+id/PhoneNumber"
             app:layout_constraintEnd_toEndOf="@+id/PhoneNumber"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
@@ -38,7 +38,7 @@
             android:id="@+id/OTP"
             app:layout_constraintEnd_toEndOf="@+id/PhoneNumber"
             app:layout_constraintStart_toStartOf="@+id/PhoneNumber" android:layout_marginTop="116dp"
-            app:layout_constraintTop_toTopOf="@+id/button" android:hint="Enter OTP"
+            app:layout_constraintTop_toTopOf="@+id/send_otp" android:hint="Enter OTP"
     />
     <Button
             android:text="SUBMIT"

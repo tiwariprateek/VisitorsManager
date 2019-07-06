@@ -1,6 +1,7 @@
 package com.example.visitorsmanager
 
 import android.content.ContextWrapper
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -25,8 +26,8 @@ class PhotoActivity : AppCompatActivity() {
     lateinit var photobutton: Button
     var imageView: ImageView? = null
     var button: Button? = null
-    lateinit var compressedimage:Bitmap
-    lateinit var savedphoto:File
+    lateinit var compressedimage: Bitmap
+    lateinit var savedphoto: File
 //    var photouri:Uri?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +64,7 @@ class PhotoActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
     var photoselected: Uri? = null
     private val photoonclicklistner = object : View.OnClickListener {
         override fun onClick(v: View?) {
@@ -80,40 +82,57 @@ class PhotoActivity : AppCompatActivity() {
                         e.printStackTrace()
                         Log.e("error", "This didn't worked")
                     }
-                    uploadPhoto()
-                    imagedisplay()
-                    imagecompressor()
-                    finish()
+                    //uploadPhoto()
+                    //imagedisplay()
+                    //imagecompressor()
+                    start()
                 }
 
             })
         }
     }
 
-    fun imagecompressor(){
-        compressedimage= Compressor(this).compressToBitmap(savedphoto)
-        val directory=Environment.getExternalStorageDirectory()
-        val file=File(directory,"Compressed image.jpg")
-        try {
-        }
-        catch (e:java.io.IOException){
-            e.printStackTrace()
-        }
-        Log.d("Compressed","compressed image is ($compressedimage)")
-    }
-fun imagedisplay(){
-    compressedimage= Compressor(this).compressToBitmap(savedphoto)
-    DisplayView?.setImageBitmap(compressedimage)
-    button2?.alpha=0f
-}
-    fun uploadPhoto(){
-        var name=savedphoto.name
-        var photouri= Uri.fromFile(savedphoto)
-        val filename = UUID.randomUUID().toString()
-        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
-        ref.putFile(photouri)
+//    fun imagecompressor() {
+//        val compressedFile=File(Environment.getExternalStorageDirectory(),"Compressedimage")
+//        val compress=Compressor(this).setDestinationDirectoryPath(compressedFile.path).compressToFile(savedphoto)
+//        Log.d("Image","Image is compressed to $compress")
+////        compressedimage = Compressor(this).compressToBitmap(savedphoto)
+////        val directory = Environment.getExternalStorageDirectory()
+////        val file = File(directory, "Compressed image.jpg")
+////        try {
+////        } catch (e: java.io.IOException) {
+////            e.printStackTrace()
+////        }
+////        Log.d("Compressed", "compressed image is ($compressedimage)")
+//    }
+
+    fun imagedisplay() {
+        val compressedFile=File(Environment.getExternalStorageDirectory(),"Compressedimage")
+        val compress=Compressor(this).setDestinationDirectoryPath(compressedFile.path).compressToFile(savedphoto)
+        imageView?.setImageBitmap(BitmapFactory.decodeFile("${savedphoto.path}"))
+        Log.d("Image_display ","Is this image displayed ${savedphoto.path}")
+//        compressedimage = Compressor(this).compressToBitmap(savedphoto)
+//        DisplayView?.setImageBitmap(compressedimage)
+//        button2?.alpha = 0f
     }
 
+//    fun uploadPhoto() {
+//        var name = savedphoto.name
+//        var photouri = Uri.fromFile(savedphoto)
+//        val filename = UUID.randomUUID().toString()
+//        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+//        ref.putFile(photouri)
+//    }
+
+    fun start() {
+        imagedisplay()
+        val compressedFile=File(Environment.getExternalStorageDirectory(),"Compressedimage")
+        val compress=Compressor(this).setDestinationDirectoryPath(compressedFile.path).compressToFile(savedphoto)
+        var photouri=Uri.fromFile(compress)
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("Photo",photouri.toString())
+        startActivity(intent)
     }
+}
 
 

@@ -6,10 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".Main2Activity">
-
     <TextView
-            android:text="Hello World!!"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" tools:layout_editor_absoluteY="355dp"
-            tools:layout_editor_absoluteX="189dp" android:id="@+id/textView"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:textSize="30sp" android:textStyle="bold"/>
 </android.support.constraint.ConstraintLayout>
