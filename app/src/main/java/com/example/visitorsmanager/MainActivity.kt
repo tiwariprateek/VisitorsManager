@@ -13,78 +13,59 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+    lateinit var phonenumber: String
+    val countrycode="+91"
+
     lateinit var display:ImageView
     var storedVerificationId:String?=null
     var counter:Long?=null
     lateinit var callbacks:PhoneAuthProvider.OnVerificationStateChangedCallbacks
     lateinit var string: String
     var verificationId= ""
-//    var resendtoken:MediaSession.Token?=null
     private val auth=FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         //count()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //button?.alpha=0f
-        //querydatabase()
-        //count()
-        button2.setOnClickListener {
-            startActivity(Intent(this,PhotoActivity::class.java))
-        }
-        submit.setOnClickListener {
-            authenticate()
-            //otpverification()
-            //verifysignin()
-
-
-
-            //activity()
+        Selectphotobutton.setOnClickListener {
+            val i3=Intent(this@MainActivity,PhotoActivity::class.java)
+            startActivity(i3)
         }
         send_otp.setOnClickListener {
-            otpverification()
+            checkuser()
             imagedisplay()
 
         }
+        submit.setOnClickListener {
+            authenticate()
+        }
 
         }
-    fun activity(){
-        val intent = Intent(this@MainActivity, Main2Activity::class.java)
-        startActivity(intent)
-    }
-
-
-
     private fun otpverification(){
-        verifyFunction()
-    val phonenumber=PhoneNumber.text.toString()
-
-        if (phonenumber.isEmpty()||phonenumber.length!=13){
+    verifyFunction()
+    phonenumber=PhoneNumber.text.toString()
+    val finalPhoneNumber=countrycode+phonenumber
+    if (finalPhoneNumber.isEmpty()||finalPhoneNumber.length!=13){
             Toast.makeText(this,"Enter valid details",Toast.LENGTH_SHORT).show()
         }
-    PhoneAuthProvider.getInstance().verifyPhoneNumber(
-        phonenumber,
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+        finalPhoneNumber,
         60,
         TimeUnit.SECONDS,
         this,
         callbacks
     )
-
     }
-    private fun verifysignin(){
-        val otp=OTP.text.toString()
-        val credential=PhoneAuthProvider.getCredential(storedVerificationId!!,otp)
-        callbacks.onVerificationCompleted(credential)
-     }
     private fun verifyFunction() {
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-//                Log.d("Phone number", "onVerificationCompleted:$credential")
                 signInWithPhoneAuthCredential(credential)
             }
 
@@ -123,17 +104,14 @@ fun authenticate(){
     val otp=OTP.text.toString()
     val credential:PhoneAuthCredential=PhoneAuthProvider.getCredential(verificationId,otp)
     signInWithPhoneAuthCredential(credential)
-
 }
     fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task: Task<AuthResult> ->
                 if (task.isSuccessful) {
-                    uploadtouser()
+                    uploadimage()
+                    checkuser()
                     Toast.makeText(this@MainActivity, "Enter valid details", Toast.LENGTH_SHORT).show()
-                    //val intent=Intent(this@MainActivity,Main2Activity::class.java)
-                    //startActivity(intent)
-                    count()
                 } else {
                     Toast.makeText(this,"Enter a valid otp",Toast.LENGTH_LONG).show()
                     uploadtosuspicious_user()
@@ -144,76 +122,69 @@ fun imagedisplay(){
     display=findViewById(R.id.DisplayView)
     display.setImageBitmap(BitmapFactory.decodeFile("/storage/emulated/0/photo.jpg"))
 }
-fun uploadtouser(){
-    uploadimage()
+fun uploadtouser() {
+    val profileImageURL=reference.downloadUrl.toString()
     val uid=FirebaseAuth.getInstance().uid?:""
-    val ref=FirebaseDatabase.getInstance().getReference("/Visitors/$uid/")
-    val phonenumber=PhoneNumber.text.toString()
-  ref.setValue(phonenumber)
+    val ref=FirebaseDatabase.getInstance().getReference("/Visitors/$phonenumber/")
+    phonenumber=PhoneNumber.text.toString()
+    visitcounter=1
+    val user=User(uid,phonenumber,profileImageURL,visitcounter)
+    ref.setValue(user)
       .addOnSuccessListener {
-          Toast.makeText(this,"Sucess",Toast.LENGTH_SHORT).show()
+          Log.d("Upload","Data is uploaded")
       }
 }
-    fun fetchdata() {
-        val ref = FirebaseDatabase.getInstance().getReference("/Visitors/")
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                Log.d("Fail", "Failure has occured")
-            }
 
-            override fun onDataChange(p0: DataSnapshot) {
-                val value = p0.getValue(String::class.java)
-                Log.d("Value", "Values is $value")
-            }
-        })
-    }
     fun uploadtosuspicious_user(){
+        val profileImageURL=reference.downloadUrl.toString()
         val uid=FirebaseAuth.getInstance().uid?:""
-        val ref=FirebaseDatabase.getInstance().getReference("/suspicious_user/$uid")
-        val phonenumber=PhoneNumber.text.toString()
-        ref.setValue(phonenumber)
+        val ref=FirebaseDatabase.getInstance().getReference("/suspicious_user/$phonenumber")
+        phonenumber=PhoneNumber.text.toString()
+        visitcounter=1
+        val user=User(uid, phonenumber, profileImageURL,visitcounter)
+        ref.setValue(user)
             .addOnSuccessListener {
                 Toast.makeText(this,"Sucess",Toast.LENGTH_SHORT).show()
             }
     }
-fun count(){
-    val ref=FirebaseDatabase.getInstance().getReference()
-
-
-    ref.addListenerForSingleValueEvent(object :ValueEventListener{
-        override fun onCancelled(p0: DatabaseError) {
-
-        }
-
-        override fun onDataChange(p0: DataSnapshot) {
-            for (snap in p0.children) {
-                counter=snap.childrenCount
-                Log.d("Count ${snap.key}", "Number of users ($counter)")
-                val intent=Intent(this@MainActivity,Main2Activity::class.java)
-                string=counter.toString()
-                Log.d("Prateek1","Value of counter $string")
-                intent.putExtra("Numbers",string)
-                startActivity(intent)
-            }
-        }
-
-    })
-}
-fun querydatabase(){
-    val phonenumber=PhoneNumber.text.toString()
-    val uid=FirebaseAuth.getInstance().uid?:""
-    val ref=FirebaseDatabase.getInstance().getReference("/Visitors")
-    val query=ref.orderByChild("$uid")
-    if(query.equals(phonenumber)){
-        Log.d("Prateek","The user exists")
-    }
-}
-
+lateinit var reference:StorageReference
 fun uploadimage(){
     val filename=UUID.randomUUID().toString()
-    val ref=FirebaseStorage.getInstance().getReference("/images/$filename")
-    val uri=Uri.parse(intent.extras.getString("Photo"))
-    ref.putFile(uri)
+    reference=FirebaseStorage.getInstance().getReference("/images/$filename")
+    val abc=Uri.parse(intent.getStringExtra("Photo"))
+    //val uri=Uri.parse(intent.extras.getString("Photo"))
+    reference.putFile(abc)
+    uploadtouser()
+}
+class User(val uid:String,val phonenumber:String,val profileImageURL:String,val visitcounter:Int){}
+var visitcounter:Int = 1
+    var final:Int=1
+    fun checkuser(){
+    val uid=FirebaseAuth.getInstance().uid
+    phonenumber=PhoneNumber.text.toString()
+    val path= "/Visitors/$uid/phonenumber"
+    val ref=FirebaseDatabase.getInstance().getReference("/Visitors/$phonenumber")
+    ref.addListenerForSingleValueEvent(object :ValueEventListener{
+        override fun onCancelled(p0: DatabaseError) {
+                   }
+        override fun onDataChange(p0: DataSnapshot) {
+            val binary=p0.exists()
+//            val visit=p0.child("visitcounter").value.toString()
+//            var visitint=visit.toInt()
+            if(binary==true) {
+                val visit=p0.child("visitcounter").value.toString()
+                var visitint=visit.toInt()
+                final = visitint + 1
+                ref.child("visitcounter").setValue(visitint)
+                val i = Intent(this@MainActivity, Main2Activity::class.java)
+                i.putExtra("visitcount", final.toString())
+                startActivity(i)
+            }
+            otpverification()
+                Log.d("Binary", "This Worked")
+
+        }
+    })
 }
 
     }

@@ -17,13 +17,13 @@ import java.io.File
 import java.io.FileOutputStream
 
 class Main2Activity : AppCompatActivity() {
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
             //var number=intent.extras.getString("Number")
-            val i=intent.getStringExtra("Numbers")
-            textView.text=("You are visitor number $i")
-            Log.v("Prateek","Value of counter $i")
+            val i=intent.getStringExtra("visitcount")
+            textView.text=("Welcome back $i time")
+//            Log.v("Prateek","Value of counter $i")
 //            var i=intent
 //            var name=i.getStringExtra("Number")
 //            textView.text=name
