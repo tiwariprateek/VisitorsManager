@@ -20,19 +20,13 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-    lateinit var phonenumber: String
-    val countrycode="+91"
-
-    lateinit var display:ImageView
-    var storedVerificationId:String?=null
-    var counter:Long?=null
-    lateinit var callbacks:PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    lateinit var string: String
-    var verificationId= ""
+    private lateinit var phonenumber: String
+    private val countrycode="+91"
+    private lateinit var display:ImageView
+    private lateinit var callbacks:PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private var verificationId= ""
     private val auth=FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
-        //count()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Selectphotobutton.setOnClickListener {
@@ -91,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-fun authenticate(){
+private fun authenticate(){
     val otp=OTP.text.toString()
     val credential:PhoneAuthCredential=PhoneAuthProvider.getCredential(verificationId,otp)
     signInWithPhoneAuthCredential(credential)
@@ -105,15 +99,15 @@ fun authenticate(){
                     Toast.makeText(this@MainActivity, "Please wait for authentication", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this,"Enter a valid otp",Toast.LENGTH_LONG).show()
-                    uploadtosuspicious_user()
+                    uploadtosuspicioususer()
                 }
             }
     }
-fun imagedisplay(){
+private fun imagedisplay(){
     display=findViewById(R.id.DisplayView)
     display.setImageBitmap(BitmapFactory.decodeFile("/storage/emulated/0/photo.jpg"))
 }
-fun uploadtouser() {
+private fun uploadtouser() {
     val profileImageURL=reference.downloadUrl.toString()
     val uid=FirebaseAuth.getInstance().uid?:""
     val ref=FirebaseDatabase.getInstance().getReference("/Visitors/$phonenumber/")
@@ -121,12 +115,9 @@ fun uploadtouser() {
     visitcounter=1
     val user=User(uid,phonenumber,profileImageURL,visitcounter)
     ref.setValue(user)
-      .addOnSuccessListener {
-          Log.d("Upload","Data is uploaded")
-      }
 }
 
-    fun uploadtosuspicious_user(){
+    private fun uploadtosuspicioususer(){
         val profileImageURL=reference.downloadUrl.toString()
         val uid=FirebaseAuth.getInstance().uid?:""
         val ref=FirebaseDatabase.getInstance().getReference("/suspicious_user/$phonenumber")
@@ -138,30 +129,25 @@ fun uploadtouser() {
                 Toast.makeText(this,"Sucess",Toast.LENGTH_SHORT).show()
             }
     }
-lateinit var reference:StorageReference
-fun uploadimage(){
+private lateinit var reference:StorageReference
+private fun uploadimage(){
     val filename=UUID.randomUUID().toString()
     reference=FirebaseStorage.getInstance().getReference("/images/$filename")
     val abc=Uri.parse(intent.getStringExtra("Photo"))
-    //val uri=Uri.parse(intent.extras.getString("Photo"))
     reference.putFile(abc)
     uploadtouser()
 }
 class User(val uid:String,val phonenumber:String,val profileImageURL:String,val visitcounter:Int){}
-var visitcounter:Int = 1
-    var final:Int=1
-    fun checkuser(){
+private var visitcounter:Int = 1
+private fun checkuser(){
     val uid=FirebaseAuth.getInstance().uid
     phonenumber=PhoneNumber.text.toString()
-    val path= "/Visitors/$uid/phonenumber"
     val ref=FirebaseDatabase.getInstance().getReference("/Visitors/$phonenumber")
     ref.addListenerForSingleValueEvent(object :ValueEventListener{
         override fun onCancelled(p0: DatabaseError) {
                    }
         override fun onDataChange(p0: DataSnapshot) {
             val binary=p0.exists()
-//            val visit=p0.child("visitcounter").value.toString()
-//            var visitint=visit.toInt()
             if(binary==true) {
                 val visit=p0.child("visitcounter").value.toString()
                 var visitint=visit.toInt()
@@ -173,8 +159,6 @@ var visitcounter:Int = 1
                 startActivity(i)
             }
             otpverification()
-                Log.d("Binary", "This Worked")
-
         }
     })
 }

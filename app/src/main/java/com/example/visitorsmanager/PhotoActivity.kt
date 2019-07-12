@@ -1,8 +1,6 @@
 package com.example.visitorsmanager
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -17,12 +15,11 @@ import java.io.File
 import java.io.FileOutputStream
 
 class PhotoActivity : AppCompatActivity() {
-    lateinit var cameraKitView: CameraKitView
-    lateinit var photobutton: Button
-    var imageView: ImageView? = null
-    var button: Button? = null
-    lateinit var compressedimage: Bitmap
-    lateinit var savedphoto: File
+    private lateinit var cameraKitView: CameraKitView
+    private lateinit var photobutton: Button
+    private var imageView: ImageView? = null
+    private var button: Button? = null
+    private lateinit var savedphoto: File
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
@@ -58,35 +55,22 @@ class PhotoActivity : AppCompatActivity() {
         cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    var photoselected: Uri? = null
-    private val photoonclicklistner = object : View.OnClickListener {
-        override fun onClick(v: View?) {
-            cameraKitView.captureImage(object : CameraKitView.ImageCallback {
-                override fun onImage(cameraKitView: CameraKitView, capturedimage: ByteArray) {
-                    val loaction = filesDir
-                    savedphoto = File(Environment.getExternalStorageDirectory(), "photo.jpg")
-
-                    try {
-                        val outputStream = FileOutputStream(savedphoto.path)
-                        outputStream.write(capturedimage)
-                        outputStream.close()
-                        Log.e("Error", "Did it worked ($savedphoto)+($capturedimage)")
-                    } catch (e: java.io.IOException) {
-                        e.printStackTrace()
-                        Log.e("error", "This didn't worked")
-                    }
-                    start()
-                }
-            })
+    private val photoonclicklistner = View.OnClickListener {
+        cameraKitView.captureImage { cameraKitView, capturedimage ->
+            savedphoto = File(Environment.getExternalStorageDirectory(), "photo.jpg")
+            try {
+                val outputStream = FileOutputStream(savedphoto.path)
+                outputStream.write(capturedimage)
+                outputStream.close()
+                Log.e("Error", "Did it worked ($savedphoto)+($capturedimage)")
+            } catch (e: java.io.IOException) {
+                e.printStackTrace()
+                Log.e("error", "This didn't worked")
+            }
+            start()
         }
     }
-    fun imagedisplay() {
-        val compressedFile=File(Environment.getExternalStorageDirectory(),"Compressedimage")
-        val compress=Compressor(this).setDestinationDirectoryPath(compressedFile.path).compressToFile(savedphoto)
-        imageView?.setImageBitmap(BitmapFactory.decodeFile("${savedphoto.path}"))
-    }
-    fun start() {
-        imagedisplay()
+    private fun start() {
         val compressedFile=File(Environment.getExternalStorageDirectory(),"Compressedimage")
         val compress=Compressor(this).setDestinationDirectoryPath(compressedFile.path).compressToFile(savedphoto)
         val photouri=Uri.fromFile(compress)
