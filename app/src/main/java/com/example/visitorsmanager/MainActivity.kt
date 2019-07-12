@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -74,12 +75,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onVerificationFailed(e: FirebaseException?) {
-               Toast.makeText(this@MainActivity,"Incorrect OTP",Toast.LENGTH_LONG).show()
-//                if (e is FirebaseAuthInvalidCredentialsException) {
-//                    Log.d("Phone number", "Exception")
-//                } else if (e is FirebaseTooManyRequestsException) {
-//                    Log.d("Phone number", "Exception2")
-//                }
+               Toast.makeText(this@MainActivity,"OTP not received,Please try again after some time ",Toast.LENGTH_LONG).show()
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    Log.d("Phone number", "Exception")
+                } else if (e is FirebaseTooManyRequestsException) {
+                    Log.d("Phone number", "Exception2")
+                }
             }
 
 
@@ -87,16 +88,6 @@ class MainActivity : AppCompatActivity() {
             override fun onCodeSent(verification: String?, token: PhoneAuthProvider.ForceResendingToken?) {
                super.onCodeSent(verification,token)
                 verificationId=verification.toString()
-//                Log.d("Phone number", "Code sent:" + verificationId!!)
-//                val otp = OTP.text.toString()
-//                storedVerificationId = verificationId
-//                Log.d("OTP", "Verification code is $verificationId")
-//
-//                val resendtoken = token
-//                //val credential=PhoneAuthProvider.getCredential(verificationId!!,otp)
-//
-//            }
-
             }
         }
     }
@@ -111,7 +102,7 @@ fun authenticate(){
                 if (task.isSuccessful) {
                     uploadimage()
                     checkuser()
-                    Toast.makeText(this@MainActivity, "Enter valid details", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Please wait for authentication", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this,"Enter a valid otp",Toast.LENGTH_LONG).show()
                     uploadtosuspicious_user()
@@ -174,10 +165,11 @@ var visitcounter:Int = 1
             if(binary==true) {
                 val visit=p0.child("visitcounter").value.toString()
                 var visitint=visit.toInt()
-                final = visitint + 1
+                visitint += 1
                 ref.child("visitcounter").setValue(visitint)
+                val finalvisit=p0.child("visitcounter").value.toString()
                 val i = Intent(this@MainActivity, Main2Activity::class.java)
-                i.putExtra("visitcount", final.toString())
+                i.putExtra("visitcount", finalvisit)
                 startActivity(i)
             }
             otpverification()

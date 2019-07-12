@@ -8,7 +8,7 @@
         tools:context=".PhotoActivity">
 
     <com.camerakit.CameraKitView
-            app:camera_facing="back"
+            app:camera_facing="front"
             android:layout_width="0dp"
 
             android:layout_height="0dp"
@@ -19,7 +19,8 @@
 
     </com.camerakit.CameraKitView>
     <android.support.v7.widget.AppCompatButton
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/rounded_buttons2"
+
             android:layout_width="139dp"
             android:layout_height="53dp"
             app:layout_constraintStart_toStartOf="@+id/camera" app:layout_constraintEnd_toEndOf="@+id/camera"
