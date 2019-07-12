@@ -131,9 +131,12 @@ private fun uploadtouser() {
     }
 private lateinit var reference:StorageReference
 private fun uploadimage(){
+    val abc=Uri.parse(intent.getStringExtra("Photo"))
+    if (abc==null){
+        Toast.makeText(this@MainActivity,"Please Upload Image",Toast.LENGTH_SHORT).show()
+    }
     val filename=UUID.randomUUID().toString()
     reference=FirebaseStorage.getInstance().getReference("/images/$filename")
-    val abc=Uri.parse(intent.getStringExtra("Photo"))
     reference.putFile(abc)
     uploadtouser()
 }
@@ -158,7 +161,12 @@ private fun checkuser(){
                 i.putExtra("visitcount", finalvisit)
                 startActivity(i)
             }
-            otpverification()
+            else
+                if (display==null){
+                    Toast.makeText(this@MainActivity,"Please upload the image",Toast.LENGTH_SHORT).show()
+                }
+                else
+                    otpverification()
         }
     })
 }
