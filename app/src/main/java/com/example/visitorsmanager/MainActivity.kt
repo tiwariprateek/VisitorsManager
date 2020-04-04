@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         }
         send_otp.setOnClickListener {
             checkuser()
-            imagedisplay()
+
 
         }
         submit.setOnClickListener {
@@ -43,6 +43,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         }
+
+    override fun onResume() {
+        super.onResume()
+        imagedisplay()
+    }
+
     private fun otpverification(){
     verifyFunction()
     phonenumber=PhoneNumber.text.toString()
